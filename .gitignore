@@ -1,0 +1,3 @@
+constants.py
+coins_ledger.db
+*.log
