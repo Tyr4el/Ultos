@@ -31,58 +31,6 @@ bot.remove_command("help")
 
 extensions = ['basic', 'admin', 'anime', 'fun', 'games', 'error_handler', 'coins']
 
-# Grim Tools on_message function
-# @client.event
-# async def on_message(ctx, channel):
-#     reg = re.compile(r'\bhttps:\/\/www\.grimtools\.com\/calc\/([a-zA-Z0-9]+)\/?\b')
-#     match = reg.match(message.content)
-#     new_char = ""
-#     if match:
-#         async with aiohttp.ClientSession() as session:
-#             async with session.get('http://www.grimtools.com/get_build_info.php?id={0}'.format(match[1])) as r:
-#                 await ctx.send(message.channel, "Grim Tools Link detected!")
-#                 await ctx.delete(message)
-#
-#                 if r is not None:
-#                     json = await r.json()
-#                     new_char = character.Character.convert_json_to_char_data(json)
-#                     mastery_combo = []
-#                     mastery_levels = []
-#                     skills = []
-#                     gt_class = ""
-#                     for mastery in new_char.masteries.keys():
-#                         mastery_combo.append(mastery)
-#
-#                     for level in new_char.masteries.values():
-#                         mastery_levels.append(level)
-#
-#                     for skill in new_char.skills.keys():
-#                         skills.append(skill)
-#
-#                     gt_class = constants.classes[tuple(mastery_combo)]
-#
-#                     embed = discord.Embed(
-#                         description=f""
-#                         f"**[Level {new_char.level} {gt_class}]({match[0]})** \n\n"
-#                         f"`Physique` {new_char.physique} \n "
-#                         f"`Cunning` {new_char.cunning} \n "
-#                         f"`Spirit` {new_char.spirit}",
-#                         color=discord.Colour.orange()
-#                     )
-#
-#                     embed.add_field(name=f'{mastery_combo[0]}', value=f'{mastery_levels[0]}', inline=True)
-#                     embed.add_field(name=f'{mastery_combo[1]}', value=f'{mastery_levels[1]}')
-#                     embed.add_field(name='Active Skills', value=f'{skills}', inline=False)
-#                     embed.add_field(name='Passive Skills', value='blank', inline=False)
-#                     embed.set_footer(text=f'{new_char.patch}')
-#
-#                     await ctx.send(embed=embed)
-#
-#                 elif match is None:
-#                     pass
-#
-#     await ctx.process_commands(message)
-
 
 @bot.event
 async def on_member_join(member):
