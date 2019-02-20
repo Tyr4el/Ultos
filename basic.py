@@ -84,11 +84,11 @@ class BasicCog:
         total_mem = psutil.virtual_memory().total
         percent_mem_used = (used_mem / total_mem) * 100
         embed = discord.Embed(
-            title=f"**{self.bot.user.name} Statistics**",
+            title=f"{self.bot.user.name} Statistics",
             color=discord.Colour.dark_green()
         )
         embed.set_thumbnail(url=self.bot.user.avatar_url)
-        embed.add_field(name="Uptime", value=uptime, inline=False)
+        embed.add_field(name="Uptime", value=uptime.strftime("%H:%M:%S"), inline=False)
         embed.add_field(name="CPU Utilization", value=f"{cpu_percent:.2f}%", inline=True)
         embed.add_field(name="CPU Count", value=cpu_count, inline=True)
         embed.add_field(name="Free Memory", value=free_mem, inline=True)
