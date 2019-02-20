@@ -34,7 +34,6 @@ extensions = ['basic', 'admin', 'anime', 'fun', 'games', 'error_handler', 'coins
 
 @bot.event
 async def on_member_join(member):
-    channel = bot.get_channel(532936314631225346)
     bot_spam_channel = bot.get_channel(541969928606056462)
     embed = discord.Embed(
         title="Welcome!",
@@ -44,6 +43,8 @@ async def on_member_join(member):
         color=discord.Colour.dark_gold()
     )
 
+    await member.send(embed=embed)
+
     try:
         bot.db.set_default_coins(member.id, member.name, coins=1000)
         await bot_spam_channel.send(f"{constants.success_string} Member ({member.id}) joined the server!  1000 coins "
@@ -51,8 +52,6 @@ async def on_member_join(member):
     except sqlite3.Error as e:
         print(e)
         await bot_spam_channel.send(f"{constants.error_string} Member ({member.id}) already exists.  Coins not added.")
-
-    await member.send(embed=embed)
 
 
 @bot.event
