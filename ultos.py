@@ -38,9 +38,9 @@ async def on_member_join(member):
     bot_spam_channel = bot.get_channel(541969928606056462)
     embed = discord.Embed(
         title="Welcome!",
-        description=f"Welcome **{member.mention}**!  Upon joining the server, you've been awarded 1,000 Fun Time Coins!"
-        f"  Use these on the different games that I have!  Use `$help` to see what commands there are.  Oh, and don't "
-        f"be a dick.  kthxbai.",
+        description=f"Welcome **{member.mention}** to Happy Fun Time Express!  Upon joining the server, you've been "
+        f"awarded 1,000 Fun Time Coins!  Use these on the different games that I have!  Use `$help` to see what "
+        f"commands there are.  Oh, and don't be a dick.  kthxbai.",
         color=discord.Colour.dark_gold()
     )
 
@@ -52,7 +52,7 @@ async def on_member_join(member):
         print(e)
         await bot_spam_channel.send(f"{constants.error_string} Member ({member.id}) already exists.  Coins not added.")
 
-    await channel.send(embed=embed)
+    await member.send(embed=embed)
 
 
 @bot.event
