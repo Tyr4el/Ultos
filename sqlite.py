@@ -23,15 +23,13 @@ class SqlLiteConnector:
             cursor.execute('UPDATE Users SET Coins=Coins - ? WHERE ID=?', (coins, str(user_id)))
             self.connection.commit()
 
-    def remove_user_from_db(self, user_id, name, coins):
+    def remove_user_from_db(self, user_id):
         with closing(self.connection.cursor()) as cursor:
             try:
-                cursor.execute('INSERT INTO Users (ID, Name, Coins) VALUES (?,?,?)', [str(user_id), name, coins])
+                cursor.execute('DELETE FROM Users WHERE ID=?', (str(user_id),))
                 self.connection.commit()
             except sqlite3.Error as e:
                 print(e)
-                cursor.execute('DELETE FROM Users WHERE ID=?', (str(user_id),))
-                self.connection.commit()
 
     def set_coins(self, user_id, coins):
         with closing(self.connection.cursor()) as cursor:
