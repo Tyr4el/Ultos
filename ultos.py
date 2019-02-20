@@ -57,7 +57,7 @@ async def on_member_join(member):
 @bot.event
 async def on_member_remove(member):
     channel = bot.get_channel(541969928606056462)
-    bot.db.remove_user_from_db(member.id, member.name, coins=None)
+    bot.db.remove_user_from_db(member.id)
     await channel.send(f"{constants.success_string} {member.name} left the server.  Removed coins.")
 
 
