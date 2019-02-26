@@ -5,7 +5,7 @@ import sys
 import traceback
 
 
-class ErrorHandlerCog:
+class ErrorHandlerCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
