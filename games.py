@@ -119,6 +119,7 @@ class GamesCog:
             triple = bet_amount * 3
             quadruple = bet_amount * 4
             fruitsplosion = bet_amount * 10
+            self.bot.db.remove_coins(ctx.author.id, bet_amount)
 
             fruits = ['🍒', '🍇', '🍐', '🍎', '🍋', '🍈', '🍑', '🍊']
             results = [fruit for fruit in random.choices(fruits, k=5)]
@@ -148,7 +149,6 @@ class GamesCog:
                 self.bot.db.add_coins(ctx.author.id, fruitsplosion)
             else:
                 await ctx.send(f"**{ctx.author.name}** did not win.")
-                self.bot.db.remove_coins(ctx.author.id, bet_amount)
         else:
             await ctx.send(f"{constants.error_string} You need to enter a bet amount!")
 
