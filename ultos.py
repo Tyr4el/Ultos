@@ -29,49 +29,8 @@ bot.db = sqlite.SqlLiteConnector.start_connection('coins_ledger.db')
 bot.remove_command("help")
 
 
-extensions = ['basic', 'admin', 'anime', 'fun', 'games', 'error_handler', 'coins']
-
-
-@bot.event
-async def on_member_join(member):
-    bot_spam_channel = bot.get_channel(541969928606056462)
-    embed = discord.Embed(
-        title="Welcome!",
-        description=f"Welcome **{member.mention}** to Happy Fun Time Express!  Upon joining the server, you've been "
-        f"awarded 1,000 Fun Time Coins!  Use these on the different games that I have!  Use `$help` to see what "
-        f"commands there are.  Oh, and don't be a dick.  kthxbai.",
-        color=discord.Colour.dark_gold()
-    )
-
-    await member.send(embed=embed)
-
-    try:
-        bot.db.set_default_coins(member.id, member.name, coins=1000)
-        await bot_spam_channel.send(f"{constants.success_string} Member ({member.id}) joined the server!  1000 coins "
-                                    f"have been added.")
-    except sqlite3.Error as e:
-        print(e)
-        await bot_spam_channel.send(f"{constants.error_string} Member ({member.id}) already exists.  Coins not added.")
-
-
-@bot.event
-async def on_member_remove(member):
-    channel = bot.get_channel(541969928606056462)
-    bot.db.remove_user_from_db(member.id)
-    await channel.send(f"{constants.success_string} {member.name} left the server.  Removed coins.")
-
-
-@bot.event
-# TODO: Don't print stuff every time the bot loads and don't update db every time
-async def on_ready():
-    channel = bot.get_channel(541969928606056462)
-    print(f"\n\nLogged in as: {bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}\n")
-    await bot.change_presence(activity=discord.Game(name='Use $help'))
-    print(f"Successfully logged in and booted...!")
-    guild_members = bot.get_all_members()
-    for member in guild_members:
-        if not member.bot:
-            bot.db.set_default_coins(member.id, member.name, coins=1000)
+extensions = ['basic', 'admin', 'anime', 'fun', 'games', 'error_handler', 'coins', 'events']
+unloaded_extensions = []
 
 
 if __name__ == '__main__':
