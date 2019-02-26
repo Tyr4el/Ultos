@@ -4,7 +4,7 @@ import constants
 import sqlite3
 
 
-class CoinsCog:
+class CoinsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

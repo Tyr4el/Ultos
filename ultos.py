@@ -24,7 +24,7 @@ TOKEN = constants.TOKEN
 
 bot = commands.Bot(command_prefix='$')
 bot.session = aiohttp.ClientSession()
-bot.start_time = datetime.now(tz=timezone.utc)
+bot.start_time = datetime.now()
 bot.db = sqlite.SqlLiteConnector.start_connection('coins_ledger.db')
 bot.remove_command("help")
 

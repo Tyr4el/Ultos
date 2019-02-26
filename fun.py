@@ -4,7 +4,7 @@ from discord.ext import commands
 import constants
 
 
-class FunCog:
+class FunCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

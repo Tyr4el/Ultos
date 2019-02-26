@@ -7,7 +7,7 @@ import traceback
 import sys
 
 
-class AdminCog:
+class AdminCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

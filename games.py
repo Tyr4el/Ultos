@@ -12,7 +12,7 @@ def beats(a, b):
             (a == 'scissors' and b == 'paper'))
 
 
-class GamesCog:
+class GamesCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

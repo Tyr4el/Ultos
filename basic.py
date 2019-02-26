@@ -76,7 +76,7 @@ class BasicCog(commands.Cog):
     @commands.guild_only()
     async def stats(self, ctx):
         """Gets usage statistics for the system the bot is running on"""
-        uptime = datetime.now(tz=timezone.utc) - self.bot.start_time
+        uptime = datetime.now() - self.bot.start_time
         cpu_percent = psutil.cpu_percent(interval=None)
         cpu_count = psutil.cpu_count()
         used_mem = psutil.virtual_memory().used
@@ -88,7 +88,7 @@ class BasicCog(commands.Cog):
             color=discord.Colour.dark_green()
         )
         embed.set_thumbnail(url=self.bot.user.avatar_url)
-        embed.add_field(name="Uptime", value=uptime.strftime("%H:%M:%S"), inline=False)
+        embed.add_field(name="Uptime", value=uptime, inline=False)
         embed.add_field(name="CPU Utilization", value=f"{cpu_percent:.2f}%", inline=True)
         embed.add_field(name="CPU Count", value=cpu_count, inline=True)
         embed.add_field(name="Free Memory", value=free_mem, inline=True)
