@@ -8,7 +8,7 @@ from datetime import datetime
 import psutil
 
 
-class BasicCog:
+class BasicCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
