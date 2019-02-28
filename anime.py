@@ -267,6 +267,7 @@ class AnimeCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # Anime
     @commands.command(aliases=['animesearch'])
     @commands.guild_only()
     async def anime(self, ctx, *, anime_name=""):
@@ -328,6 +329,7 @@ class AnimeCog(commands.Cog):
             await ctx.send(f"{constants.error_string} **{ctx.author.name}**, there was a problem with "
                            f"the search or API.  Please try your search again later.")
 
+    # Manga
     @commands.command(aliases=['mangasearch'])
     @commands.guild_only()
     async def manga(self, ctx, *, manga_name=""):
@@ -388,7 +390,6 @@ class AnimeCog(commands.Cog):
         except aiohttp.ClientConnectorError:
             await ctx.send(f"{constants.error_string} **{ctx.author.name}**, there was a problem with "
                                    f"the search or API.  Please try your search again later.")
-
 
 
 def setup(bot):
