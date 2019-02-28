@@ -3,14 +3,22 @@ from discord.ext import commands
 import traceback
 import sys
 import constants
-from datetime import timezone
 from datetime import datetime
+import datetime as dt
 import psutil
+from typing import Tuple
 
 
 class BasicCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    def td_to_dhms(self, td: dt.timedelta) -> Tuple[int, int, int, int]:
+        days = td.days
+        hours = td.seconds // 3600
+        minutes = (td.seconds // 60) % 60
+        seconds = td.seconds - (hours * 3600) - (minutes * 60)
+        return days, hours, minutes, seconds
 
     # Help
     @commands.command()
@@ -77,6 +85,7 @@ class BasicCog(commands.Cog):
     async def stats(self, ctx):
         """Gets usage statistics for the system the bot is running on"""
         uptime = datetime.now() - self.bot.start_time
+        formatted_uptime = self.td_to_dhms(uptime)
         cpu_percent = psutil.cpu_percent(interval=None)
         cpu_count = psutil.cpu_count()
         used_mem = psutil.virtual_memory().used
@@ -87,8 +96,10 @@ class BasicCog(commands.Cog):
             title=f"{self.bot.user.name} Statistics",
             color=discord.Colour.dark_green()
         )
+
         embed.set_thumbnail(url=self.bot.user.avatar_url)
-        embed.add_field(name="Uptime", value=uptime, inline=False)
+        embed.add_field(name="Uptime", value=f"{formatted_uptime[0]} days {formatted_uptime[1]} hours "
+        f"{formatted_uptime[2]} seconds {formatted_uptime[3]} minutes", inline=False)
         embed.add_field(name="CPU Utilization", value=f"{cpu_percent:.2f}%", inline=True)
         embed.add_field(name="CPU Count", value=cpu_count, inline=True)
         embed.add_field(name="Free Memory", value=free_mem, inline=True)
