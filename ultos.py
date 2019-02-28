@@ -7,6 +7,7 @@ import traceback
 from datetime import datetime
 import sys
 import database
+import paginator
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
@@ -25,10 +26,15 @@ class MyBotClass(commands.Bot):
         super().__init__(*args, **kwargs)
 
 
+async def pagination(ctx, entries: list, embed=True):
+    p = paginator.Paginator(ctx, entries=entries, embed=embed)
+    return await p.paginate()
+
 bot = MyBotClass(command_prefix="$")
+bot.paginate = pagination
 bot.remove_command("help")
 
-extensions = ['basic', 'admin', 'anime', 'fun', 'games', 'error_handler', 'coins', 'events']
+extensions = ['basic', 'admin', 'anime', 'fun', 'games', 'error_handler', 'coins', 'events', 'stardew']
 
 if __name__ == '__main__':
     for extension in extensions:
