@@ -20,6 +20,7 @@ class AdminCog(commands.Cog):
         await self.bot.session.close()
         await self.bot.close()
 
+    # Ban
     @commands.command()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member: discord.Member, reason: str = None):
@@ -27,6 +28,7 @@ class AdminCog(commands.Cog):
         await member.ban(reason=reason)
         await ctx.send(f"User **{member.name}** was banned (Reason: {reason})")
 
+    # Kick
     @commands.command()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, reason: str = None):
@@ -34,6 +36,7 @@ class AdminCog(commands.Cog):
         await member.kick(reason=reason)
         await ctx.send(f"User **{member.name}** was kicked (Reason: {reason})!")
 
+    # CLean
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def clean(self, ctx, messages: int):
