@@ -43,6 +43,7 @@ class FunCog(commands.Cog):
         else:
             await ctx.send("You need to enter more than one option!")
 
+    # F
     @commands.command()
     @commands.guild_only()
     async def f(self, ctx, *, respects_string=None):
@@ -54,6 +55,7 @@ class FunCog(commands.Cog):
             bot_message = await ctx.send(f"Press :regional_indicator_f: to pay respects to {respects_string}")
             await discord.Message.add_reaction(bot_message, '🇫')
 
+    # Palindrome
     @commands.command()
     @commands.guild_only()
     async def palindrome(self, ctx, *, word=None):
