@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import constants
-import sqlite3
+import asyncpg
 
 
 class CoinsCog(commands.Cog):
@@ -20,7 +20,7 @@ class CoinsCog(commands.Cog):
                 await self.bot.db.remove_coins(ctx.author.id, amount)
                 await ctx.send(f"{constants.success_string} **{ctx.author.name}** gave **{amount}** Coins to "
                                f"**{user.name}**")
-            except sqlite3.Error as e:
+            except asyncpg.DataError as e:
                 print(e)
         else:
             await ctx.send(f"{constants.error_string} Usage: `$give <@user> [amount]`")
@@ -39,7 +39,7 @@ class CoinsCog(commands.Cog):
             try:
                 await self.bot.db.add_coins(user.id, amount)
                 await ctx.send(f"{constants.success_string} Added **{amount}** Coins to **{user.name}**")
-            except sqlite3.Error as e:
+            except asyncpg.DataError as e:
                 print(e)
         else:
             await ctx.send(f"{constants.error_string} Usage: `$debit <@user> [amount]`")
@@ -58,7 +58,7 @@ class CoinsCog(commands.Cog):
             try:
                 await self.bot.db.remove_coins(user.id, amount)
                 await ctx.send(f"{constants.success_string} Removed **{amount}** Coins from **{user.name}**")
-            except sqlite3.Error as e:
+            except asyncpg.DataError as e:
                 print(e)
                 await ctx.send(f"{constants.error_string} **{user.name}** does not have enough coins.  Use `$ledger` "
                                f"to check the number of coins that they have.")
