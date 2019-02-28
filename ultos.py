@@ -34,7 +34,7 @@ bot = MyBotClass(command_prefix="$")
 bot.paginate = pagination
 bot.remove_command("help")
 
-extensions = ['basic', 'admin', 'anime', 'fun', 'games', 'error_handler', 'coins', 'events', 'stardew']
+extensions = ['basic', 'admin', 'anime', 'fun', 'games', 'error_handler', 'coins', 'events']
 
 if __name__ == '__main__':
     for extension in extensions:
