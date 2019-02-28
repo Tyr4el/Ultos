@@ -8,38 +8,55 @@ class CoinsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=['give', 'givecoins', 'addcoins'])
+    @commands.command()
+    @commands.guild_only()
+    async def give(self, ctx, user: discord.Member, amount: int = None):
+        if user is not None and amount is not None:
+            if user.bot:
+                await ctx.send(f"{constants.error_string} Bots cannot have coins!")
+                return
+            try:
+                await self.bot.db.add_coins(user.id, amount)
+                await self.bot.db.remove_coins(ctx.author.id, amount)
+                await ctx.send(f"{constants.success_string} **{ctx.author.name}** gave **{amount}** Coins to "
+                               f"**{user.name}**")
+            except sqlite3.Error as e:
+                print(e)
+        else:
+            await ctx.send(f"{constants.error_string} Usage: `$give <@user> [amount]`")
+
+    # Credit
+    @commands.command(aliases=['addcoins'])
     @commands.guild_only()
     @commands.has_any_role("Boss Man", "Happy Fun Time Police")
     async def credit(self, ctx, user: discord.Member, amount: int = None):
         """Adds coins to a users bank/ledger"""
         if user is not None and amount is not None:
-            print(user, amount)
             # If the user is a bot
             if user.bot:
                 await ctx.send(f"{constants.error_string} Bots cannot have coins!")
                 return
             try:
-                self.bot.db.add_coins(user.id, amount)
+                await self.bot.db.add_coins(user.id, amount)
                 await ctx.send(f"{constants.success_string} Added **{amount}** Coins to **{user.name}**")
             except sqlite3.Error as e:
                 print(e)
         else:
             await ctx.send(f"{constants.error_string} Usage: `$debit <@user> [amount]`")
 
+    # Debit
     @commands.command()
     @commands.guild_only()
     @commands.has_any_role('Happy Fun Time Police', "Boss Man")
     async def debit(self, ctx, user: discord.Member, amount: int = None):
         """Removes the specified coin's from the user"""
         if user is not None and amount is not None:
-            print(user, amount)
             # If the user is a bot
             if user.bot:
                 await ctx.send(f"{constants.error_string} Bots cannot have coins!")
                 return
             try:
-                self.bot.db.remove_coins(user.id, amount)
+                await self.bot.db.remove_coins(user.id, amount)
                 await ctx.send(f"{constants.success_string} Removed **{amount}** Coins from **{user.name}**")
             except sqlite3.Error as e:
                 print(e)
@@ -48,6 +65,7 @@ class CoinsCog(commands.Cog):
         else:
             await ctx.send(f"{constants.error_string} Usage: `$debit <@user> [amount]`")
 
+    # Set
     @commands.command(aliases=['setcoins'])
     @commands.guild_only()
     @commands.has_any_role('Happy Fun Time Police', "Boss Man")
@@ -57,25 +75,28 @@ class CoinsCog(commands.Cog):
             if user.bot:
                 await ctx.send(f"{constants.error_string} Bots cannot have coins!")
                 return
-            self.bot.db.set_coins(user.id, amount)
+            await self.bot.db.set_coins(user.id, amount)
             await ctx.send(f"{constants.success_string} Coins set to **{amount}** for **{user.name}**")
         else:
             await ctx.send(f"{constants.error_string} Usage: `$set <@user> [amount]`")
 
+    # Wallet
     @commands.command(aliases=['coins', 'getcoins'])
     @commands.guild_only()
     async def wallet(self, ctx, user: discord.Member):
         """Checks the specified user's coin ledger"""
         if user is not None:
-            await ctx.send(f"**{user.name}** has **{self.bot.db.get_coins(user.id)}** Fun "
+            users_coins = await self.bot.db.get_coins(user.id)
+            await ctx.send(f"**{user.name}** has **{users_coins}** Fun "
                            f"Time Coins!")
         else:
             await ctx.send(f"{constants.error_string} Usage: `$ledger <@user>`")
 
+    # Leaderboard
     @commands.command(aliases=['leaders', 'lb'])
     @commands.guild_only()
     async def leaderboard(self, ctx):
-        leaders = self.bot.db.get_all_users_coins()
+        leaders = await self.bot.db.get_all_users_coins()
         joined_leaders = ""
         index = 1
         for leader, coins in leaders:
@@ -89,6 +110,7 @@ class CoinsCog(commands.Cog):
         )
 
         await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(CoinsCog(bot))
