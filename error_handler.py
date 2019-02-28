@@ -13,11 +13,14 @@ class ErrorHandlerCog(commands.Cog):
         if hasattr(ctx.command, 'on_error'):
             return
 
-        ignored = (commands.CommandNotFound, commands.UserInputError)
+        ignored = commands.UserInputError
         error = getattr(error, 'original', error)
 
         if isinstance(error, ignored):
             return
+
+        elif isinstance(error, commands.CommandNotFound):
+            return await ctx.send(f"{constants.error_string} {ctx.command} was not found.")
 
         elif isinstance(error, commands.DisabledCommand):
             return await ctx.send(f"{constants.error_string} {ctx.command} has been disabled.")
