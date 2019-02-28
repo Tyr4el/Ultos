@@ -16,6 +16,7 @@ class GamesCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    # RPS
     @commands.command()
     @commands.guild_only()
     async def rps(self, ctx, person_challenged: discord.Member, bet_amount: int = 0):
@@ -23,8 +24,8 @@ class GamesCog(commands.Cog):
 
         game_emoji = {'rock': '<:rock:542385712557850635>', 'paper': '📰', 'scissors': '✂'}
         game_choices = ['rock', 'paper', 'scissors']
-        author_coins = self.bot.db.get_coins(ctx.author.id)
-        challenger_coins = self.bot.db.get_coins(person_challenged.id)
+        author_coins = await self.bot.db.get_coins(ctx.author.id)
+        challenger_coins = await self.bot.db.get_coins(person_challenged.id)
 
         # Check definitions for the wait_for calls used below
         def reaction_check(reaction, user):
@@ -91,14 +92,14 @@ class GamesCog(commands.Cog):
                     if beats(msg_person1.content.lower(), msg_person2.content.lower()):
                         await ctx.send(f"{person_1_emoji} vs. {person_2_emoji}: **{msg_person1.author.name}** wins "
                                        f"**{bet_amount}** Fun Time Coins!!")
-                        self.bot.db.add_coins(str(msg_person1.author.id), bet_amount)
-                        self.bot.db.remove_coins(str(msg_person2.author.id), bet_amount)
+                        await self.bot.db.add_coins(str(msg_person1.author.id), bet_amount)
+                        await self.bot.db.remove_coins(str(msg_person2.author.id), bet_amount)
                     # Check if the second person who DM'd the bot won
                     elif beats(msg_person2.content.lower(), msg_person1.content.lower()):
                         await ctx.send(f"{person_2_emoji} vs. {person_1_emoji}: **{msg_person2.author.name}** wins "
                                        f"**{bet_amount}** Fun Time Coins!!")
-                        self.bot.db.add_coins(str(msg_person2.author.id), bet_amount)
-                        self.bot.db.remove_coins(str(msg_person1.author.id), bet_amount)
+                        await self.bot.db.add_coins(str(msg_person2.author.id), bet_amount)
+                        await self.bot.db.remove_coins(str(msg_person1.author.id), bet_amount)
                     # Otherwise it's a draw
                     else:
                         await ctx.send(f"{person_1_emoji} vs. {person_2_emoji}: It's a draw!")
@@ -106,12 +107,13 @@ class GamesCog(commands.Cog):
         else:
             await ctx.send(f"{constants.error_string} Usage: `$rps <@user> [bet_amount]`")
 
-    # TODO: Finish this command
+    # Slots
     @commands.command()
     @commands.guild_only()
     async def slots(self, ctx, bet_amount: int = 0):
         """Plays the slots for a specified bet amount"""
-        if self.bot.db.get_coins(ctx.author.id) < bet_amount:
+        authors_coins = await self.bot.db.get_coins(ctx.author.id)
+        if authors_coins < bet_amount:
             await ctx.send(f"{constants.error_string} **{ctx.author.name}** does not have enough coins.  "
                            f"Game not started.")
         elif bet_amount:
@@ -119,39 +121,37 @@ class GamesCog(commands.Cog):
             triple = bet_amount * 3
             quadruple = bet_amount * 4
             fruitsplosion = bet_amount * 10
-            self.bot.db.remove_coins(ctx.author.id, bet_amount)
+            await self.bot.db.remove_coins(ctx.author.id, bet_amount)
 
             fruits = ['🍒', '🍇', '🍐', '🍎', '🍋', '🍈', '🍑', '🍊']
             results = [fruit for fruit in random.choices(fruits, k=5)]
+            joined_results = " ".join(results)
             grouped_fruits = [len(list(g)) for k, g in itertools.groupby(results)]
             max_grouped_fruits = max(grouped_fruits)
 
             await ctx.send(f"**{ctx.author.name}** bet **{bet_amount}** Fun Time Coins to spin the slot machine!")
-
-            joined_results = " ".join(results)
             await ctx.send(joined_results)
 
             if max_grouped_fruits == 2:
                 await ctx.send(f"**{ctx.author.name}** wins with **{max_grouped_fruits}** in a row!  They win **2x** "
                                f"their original ")
-                self.bot.db.add_coins(ctx.author.id, double)
+                await self.bot.db.add_coins(ctx.author.id, double)
             elif max_grouped_fruits == 3:
                 await ctx.send(f"**{ctx.author.name}** wins with **{max_grouped_fruits}** in a row!  They win **3x** "
                                f"their original ")
-                self.bot.db.add_coins(ctx.author.id, triple)
+                await self.bot.db.add_coins(ctx.author.id, triple)
             elif max_grouped_fruits == 4:
                 await ctx.send(f"**{ctx.author.name}** wins with **{max_grouped_fruits}** in a row!  They win **4x** "
                                f"their original ")
-                self.bot.db.add_coins(ctx.author.id, quadruple)
+                await self.bot.db.add_coins(ctx.author.id, quadruple)
             elif max_grouped_fruits == 5:
                 await ctx.send(f"**{ctx.author.name}** wins with **{max_grouped_fruits}** in a row!  They win **10x** "
                                f"their original ")
-                self.bot.db.add_coins(ctx.author.id, fruitsplosion)
+                await self.bot.db.add_coins(ctx.author.id, fruitsplosion)
             else:
                 await ctx.send(f"**{ctx.author.name}** did not win.")
         else:
             await ctx.send(f"{constants.error_string} You need to enter a bet amount!")
-
 
 def setup(bot):
     bot.add_cog(GamesCog(bot))
