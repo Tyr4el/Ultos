@@ -37,6 +37,19 @@ class EventsCog(commands.Cog):
         await bot_spam_channel.send(f"{constants.success_string} {member.name} left the server.  Removed coins.")
 
     @commands.Cog.listener()
+    async def on_member_update(self, before, after):
+        bot_spam_channel = self.bot.get_channel(541969928606056462)
+        for activity in after.activities:
+            if isinstance(activity, discord.Game):
+                role_name = f"Playing: {activity}"
+                if role_name not in before.guild.roles:
+                    await before.guild.create_role(name=role_name, mentionable=True)
+                    await bot_spam_channel.send(f"{constants.success_string} New game detected!  Adding **{role_name}**"
+                                                f" to my list of roles!")
+                else:
+                    pass
+
+    @commands.Cog.listener()
     async def on_ready(self):
         await self.bot.db.start_connection()
         print(f"\n\nLogged in as: {self.bot.user.name} - {self.bot.user.id}\nVersion: {discord.__version__}\n")
