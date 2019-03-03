@@ -5,7 +5,7 @@ attrs==18.2.0
 beautifulsoup4==4.7.1
 cffi==1.12.1
 chardet==3.0.4
-discord.py==1.0.0a1691+gf686924
+discord.py
 idna==2.8
 multidict==4.5.2
 psutil==5.5.1
