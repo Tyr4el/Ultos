@@ -134,6 +134,7 @@ class GamesCog(commands.Cog):
 
         # return integer division of a/b
         return numerator // denominator
+
     # Slots
     @commands.command()
     @commands.guild_only()
