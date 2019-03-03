@@ -1,9 +1,12 @@
+import asyncio
+import itertools
+import random
+
+import constants
 import discord
 from discord.ext import commands
-import constants
-import asyncio
-import random
-import itertools
+
+FRUIT_WHEEL = ['🍒', '🍇', '🍐', '🍎', '🍋', '🍈', '🍑', '🍊']
 
 
 def beats(a, b):
@@ -107,6 +110,30 @@ class GamesCog(commands.Cog):
         else:
             await ctx.send(f"{constants.error_string} Usage: `$rps <@user> [bet_amount]`")
 
+    def calculate_slots_bonus(self, n: int) -> int:
+        """
+        Calculates the winning bonus for the slots game
+
+        follows curve generated from set {1,2,4,10,...}
+        see https://www.wolframalpha.com/input/?i=1,2,4,10,... for the specifics
+
+        Args:
+            n (int): integer value. **must** be less than 5**
+
+
+        Raises:
+            ValueError: input value `n` >= 5 (outside domain, avoids div 0 error.)
+        Returns:
+            int: calculated coefficient
+        """
+        if n > 5:
+            raise ValueError("domain of function is (-inf, 5) exclusive.")
+
+        numerator = -2 * (n + 1)
+        denominator = n - 5
+
+        # return integer division of a/b
+        return numerator // denominator
     # Slots
     @commands.command()
     @commands.guild_only()
@@ -116,15 +143,15 @@ class GamesCog(commands.Cog):
         if authors_coins < bet_amount:
             await ctx.send(f"{constants.error_string} **{ctx.author.name}** does not have enough coins.  "
                            f"Game not started.")
-        elif bet_amount:
-            double = bet_amount * 2
-            triple = bet_amount * 3
-            quadruple = bet_amount * 4
-            fruitsplosion = bet_amount * 10
+        if not bet_amount:
+            await ctx.send(f"{constants.error_string} You need to enter a bet amount!")
+            return  # bail out
+        else:  # author has enough coins, and has specified a bet
+
+            # steal their coins
             await self.bot.db.remove_coins(ctx.author.id, bet_amount)
 
-            fruits = ['🍒', '🍇', '🍐', '🍎', '🍋', '🍈', '🍑', '🍊']
-            results = [fruit for fruit in random.choices(fruits, k=5)]
+            results = [fruit for fruit in random.choices(FRUIT_WHEEL, k=5)]
             joined_results = " ".join(results)
             grouped_fruits = [len(list(g)) for k, g in itertools.groupby(results)]
             max_grouped_fruits = max(grouped_fruits)
@@ -132,26 +159,16 @@ class GamesCog(commands.Cog):
             await ctx.send(f"**{ctx.author.name}** bet **{bet_amount}** Fun Time Coins to spin the slot machine!")
             await ctx.send(joined_results)
 
-            if max_grouped_fruits == 2:
-                await ctx.send(f"**{ctx.author.name}** wins with **{max_grouped_fruits}** in a row!  They win **2x** "
-                               f"their original ")
-                await self.bot.db.add_coins(ctx.author.id, double)
-            elif max_grouped_fruits == 3:
-                await ctx.send(f"**{ctx.author.name}** wins with **{max_grouped_fruits}** in a row!  They win **3x** "
-                               f"their original ")
-                await self.bot.db.add_coins(ctx.author.id, triple)
-            elif max_grouped_fruits == 4:
-                await ctx.send(f"**{ctx.author.name}** wins with **{max_grouped_fruits}** in a row!  They win **4x** "
-                               f"their original ")
-                await self.bot.db.add_coins(ctx.author.id, quadruple)
-            elif max_grouped_fruits == 5:
-                await ctx.send(f"**{ctx.author.name}** wins with **{max_grouped_fruits}** in a row!  They win **10x** "
-                               f"their original ")
-                await self.bot.db.add_coins(ctx.author.id, fruitsplosion)
+            if max_grouped_fruits >= 2 <= 5:
+                # calculate our multiple, evaluating the function at n-1
+                multiple = self.calculate_slots_bonus(max_grouped_fruits - 1)
+                await ctx.send(f"**{ctx.author.name}** wins with **{max_grouped_fruits}**"
+                               f"in a row! they win **{multiple}x** their original!")
+                await self.bot.db.add_coins(ctx.author.id, bet_amount * multiple)
+
             else:
                 await ctx.send(f"**{ctx.author.name}** did not win.")
-        else:
-            await ctx.send(f"{constants.error_string} You need to enter a bet amount!")
+
 
 def setup(bot):
     bot.add_cog(GamesCog(bot))
