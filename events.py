@@ -19,7 +19,7 @@ class EventsCog(commands.Cog):
             color=discord.Colour.dark_gold()
         )
 
-        await member.send(embed=embed)
+        await bot_spam_channel.send(embed=embed)
 
         try:
             await self.bot.db.set_default_coins(member.id, member.name, coins=1000)
