@@ -14,8 +14,8 @@ class EventsCog(commands.Cog):
         embed = discord.Embed(
             title="Welcome!",
             description=f"Welcome **{member.mention}** to Happy Fun Time Express!  Upon joining the server, you've been "
-            f"awarded 1,000 Fun Time Coins!  Use these on the different games that I have!  Use `$help` to see what "
-            f"commands there are.  Oh, and don't be a dick.  kthxbai.",
+            f"awarded 1,000 Fun Time Coins!  The coins don't mean anything so go crazy!  Use these on the different "
+            f"games that I have!  Use `$help` to see what commands there are.  Oh, and don't be a dick.  kthxbai.",
             color=discord.Colour.dark_gold()
         )
 
