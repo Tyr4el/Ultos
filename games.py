@@ -136,39 +136,44 @@ class GamesCog(commands.Cog):
         return numerator // denominator
 
     # Slots
-    @commands.command()
-    @commands.guild_only()
-    async def slots(self, ctx, bet_amount: int = 0):
-        """Plays the slots for a specified bet amount"""
-        authors_coins = await self.bot.db.get_coins(ctx.author.id)
-        if authors_coins < bet_amount:
-            await ctx.send(f"{constants.error_string} **{ctx.author.name}** does not have enough coins.  "
-                           f"Game not started.")
-        if not bet_amount:
-            await ctx.send(f"{constants.error_string} You need to enter a bet amount!")
-            return  # bail out
-        else:  # author has enough coins, and has specified a bet
-
-            # steal their coins
-            await self.bot.db.remove_coins(ctx.author.id, bet_amount)
-
-            results = [fruit for fruit in random.choices(FRUIT_WHEEL, k=5)]
-            joined_results = " ".join(results)
-            grouped_fruits = [len(list(g)) for k, g in itertools.groupby(results)]
-            max_grouped_fruits = max(grouped_fruits)
-
-            await ctx.send(f"**{ctx.author.name}** bet **{bet_amount}** Fun Time Coins to spin the slot machine!")
-            await ctx.send(joined_results)
-
-            if max_grouped_fruits >= 2 <= 5:
-                # calculate our multiple, evaluating the function at n-1
-                multiple = self.calculate_slots_bonus(max_grouped_fruits - 1)
-                await ctx.send(f"**{ctx.author.name}** wins with **{max_grouped_fruits}**"
-                               f"in a row! they win **{multiple}x** their original!")
-                await self.bot.db.add_coins(ctx.author.id, bet_amount * multiple)
-
-            else:
-                await ctx.send(f"**{ctx.author.name}** did not win.")
+    # @commands.command()
+    # @commands.guild_only()
+    # async def slots(self, ctx, bet_amount: int = 0):
+    #     """Plays the slots for a specified bet amount"""
+    #     authors_coins = await self.bot.db.get_coins(ctx.author.id)
+    #     if authors_coins < bet_amount:
+    #         await ctx.send(f"{constants.error_string} **{ctx.author.name}** does not have enough coins.  "
+    #                        f"Game not started.")
+    #         return
+    #     if not bet_amount:
+    #         await ctx.send(f"{constants.error_string} You need to enter a bet amount!")
+    #         return  # bail out
+    #     if bet_amount < 0:
+    #         await ctx.send(f"{constants.error_string} You cannot enter a negative amount!")
+    #         return
+    #     else:  # author has enough coins, and has specified a bet
+    #
+    #         # steal their coins
+    #         await self.bot.db.remove_coins(ctx.author.id, bet_amount)
+    #
+    #         results = [fruit for fruit in random.choices(FRUIT_WHEEL, k=5)]
+    #         joined_results = " ".join(results)
+    #         grouped_fruits = [len(list(g)) for k, g in itertools.groupby(results)]
+    #         max_grouped_fruits = max(grouped_fruits)
+    #
+    #         await ctx.send(f"**{ctx.author.name}** bet **{bet_amount}** Fun Time Coins to spin the slot machine!\n"
+    #                        f"{joined_results}")
+    #         # await ctx.send(joined_results)
+    #
+    #         if max_grouped_fruits >= 2 <= 5:
+    #             # calculate our multiple, evaluating the function at n-1
+    #             multiple = self.calculate_slots_bonus(max_grouped_fruits)
+    #             await ctx.send(f"**{ctx.author.name}** wins with **{max_grouped_fruits}** "
+    #                            f"in a row! they win **{multiple - 1}x** their original!")
+    #             await self.bot.db.add_coins(ctx.author.id, bet_amount * multiple)
+    #
+    #         else:
+    #             await ctx.send(f"**{ctx.author.name}** did not win.")
 
 
 def setup(bot):
