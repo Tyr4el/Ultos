@@ -76,6 +76,8 @@ class ITADCog(commands.Cog):
                                              value="There may be more stores that have the same price as "
                                                    "this one, but this was the first one returned")
                         await ctx.send(embed=game_embed)
+                    else:
+                        await ctx.send(f"{constants.error_string} Sorry, I can't find that game.")
             except aiohttp.ClientConnectorError as e:
                 await ctx.send(f"{constants.error_string} **{ctx.author.name}**, there was a problem with "
                                f"the search or API.  Please try your search again later.")
